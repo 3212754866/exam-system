@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>答题卡批改系统</title>
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --light-color: #f8f9fc;
+            --dark-color: #5a5c69;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+        
+        .card-body {
+            padding: 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-align: center;
+            font-size: 1.1rem;
+            margin: 10px 5px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 15px rgba(78, 115, 223, 0.35);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2e59d9;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(78, 115, 223, 0.45);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+            box-shadow: 0 4px 15px rgba(28, 200, 138, 0.35);
+        }
+        
+        .btn-success:hover {
+            background-color: #17a673;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(28, 200, 138, 0.45);
+        }
+        
+        .mode-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        .mode-card {
+            flex: 1;
+            min-width: 300px;
+            max-width: 450px;
+            text-align: center;
+            padding: 35px 25px;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .mode-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .mode-icon {
+            width: 100px;
+            height: 100px;
+            background: rgba(78, 115, 223, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 2.8rem;
+            color: var(--primary-color);
+        }
+        
+        .mode-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .mode-card p {
+            color: #555;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+        
+        .step-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .step-container h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary-color);
+            font-size: 2.2rem;
+        }
+        
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 250px;
+            max-width: 300px;
+            text-align: center;
+            padding: 25px;
+            border-radius: 12px;
+            background: #f8f9fc;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin: 0 auto 20px;
+        }
+        
+        .step h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .step p {
+            color: #555;
+        }
+        
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .feature {
+            flex: 1;
+            min-width: 250px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .feature h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feature h3 i {
+            color: var(--primary-color);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+        }
+        
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            padding: 12px 25px;
+            background: #333;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .github-link:hover {
+            background: #444;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 30px 15px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .mode-card {
+                min-width: 100%;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+            
+            .card-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-graduation-cap"></i> 答题卡批改系统</h1>
+            <p>支持电脑、平板和手机的全设备解决方案 | 使用GitHub Pages轻松部署</p>
+        </header>
+        
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-star"></i> 系统概述
+            </div>
+            <div class="card-body">
+                <p>这是一个完整的答题卡批改系统，专为教育工作者设计。系统支持学生信息录入、答题、自动批改和成绩分析功能。</p>
+                
+                <div class="mode-container">
+                    <div class="mode-card">
+                        <div class="mode-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h3>学生端功能</h3>
+                        <p>学生填写个人信息并完成答题，系统自动保存答卷</p>
+                        <button class="btn btn-outline">学生入口</button>
+                    </div>
+                    
+                    <div class="mode-card">
+                        <div class="mode-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <h3>教师端功能</h3>
+                        <p>教师批改试卷、查看成绩分析、导出成绩数据</p>
+                        <button class="btn btn-outline">教师入口</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="step-container">
+            <h2><i class="fas fa-cloud-upload-alt"></i> GitHub Pages部署指南</h2>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>创建GitHub仓库</h3>
+                    <p>登录GitHub，点击"New repository"创建新仓库</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>上传HTML文件</h3>
+                    <p>将本系统HTML文件上传到仓库中</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>启用GitHub Pages</h3>
+                    <p>在仓库设置中启用GitHub Pages功能</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>访问您的系统</h3>
+                    <p>通过生成的链接访问您的答题系统</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-lightbulb"></i> 系统特点
+            </div>
+            <div class="card-body">
+                <div class="features">
+                    <div class="feature">
+                        <h3><i class="fas fa-mobile-alt"></i> 全设备支持</h3>
+                        <p>在电脑、平板和手机上都能完美运行，响应式设计自动适应各种屏幕尺寸</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h3><i class="fas fa-shield-alt"></i> 数据安全</h3>
+                        <p>学生答卷存储在浏览器本地，教师数据受密码保护，确保信息安全</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h3><i class="fas fa-bolt"></i> 高效批改</h3>
+                        <p>自动批改试卷，生成详细成绩分析，节省教师90%批改时间</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 40px;">
+                    <a href="#" class="btn btn-primary" style="padding: 15px 40px; font-size: 1.2rem;">
+                        <i class="fas fa-download"></i> 下载完整系统
+                    </a>
+                    <p style="margin-top: 15px; color: #666;">单HTML文件，无需安装，直接运行</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 答题卡批改系统 | 基于GitHub Pages部署的完整解决方案</p>
+            <a href="#" class="github-link">
+                <i class="fab fa-github"></i> 在GitHub上查看项目
+            </a>
+        </footer>
+    </div>
+    
+    <script>
+        // 添加Font Awesome图标
+        document.head.innerHTML += `
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        `;
+        
+        // 按钮悬停效果增强
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // 卡片悬停效果
+        const cards = document.querySelectorAll('.card, .mode-card, .step');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.15)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.08)';
+            });
+        });
+    </script>
+</body>
+</html>
